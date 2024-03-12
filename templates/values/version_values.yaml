@@ -1,0 +1,60 @@
+{{- if eq .Version "23.2"}}
+alfresco-repository:
+  image:
+    tag: 23.2.1
+alfresco-transform-service:
+  pdfrenderer:
+    image:
+      tag: 5.1.0
+  imagemagick:
+    image:
+      tag: 5.1.0
+  libreoffice:
+    image:
+      tag: 5.1.0
+  tika:
+    image:
+      tag: 5.1.0
+  transformmisc:
+    image:
+      tag: 5.1.0
+share:
+  image:
+    tag: 23.2.1
+alfresco-search:
+  searchServicesImage:
+    tag: 2.0.9.1
+postgresql:
+  image:
+    tag: 15.6.0
+{{- end}}
+{{- if eq .Version "23.1"}}
+alfresco-repository:
+  image:
+    tag: 23.1.0
+alfresco-transform-service:
+  pdfrenderer:
+    image:
+      tag: 5.0.1
+  imagemagick:
+    image:
+      tag: 5.0.1
+  libreoffice:
+    image:
+      tag: 5.0.1
+  tika:
+    image:
+      tag: 5.0.1
+  transformmisc:
+    image:
+      tag: 5.0.1
+share:
+  image:
+    tag: 23.1.1
+alfresco-search:
+  searchServicesImage:
+    tag: 2.0.9.1
+postgresql:
+  image:
+    tag: 14.4.0
+{{- end}}

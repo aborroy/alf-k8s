@@ -1,0 +1,57 @@
+# This values file can be used to install the latest ACS Community version using
+# the latest version of the chart
+alfresco-repository:
+  replicaCount: 1
+  image:
+    repository: alfresco/alfresco-content-repository-community
+    tag: 23.2.1
+  persistence:
+    accessModes:
+      - ReadWriteOnce
+  configuration:
+    search:
+      flavor: solr6
+activemq:
+  image:
+    repository: docker.io/alfresco/alfresco-activemq
+    tag: 5.18.3-jre17-rockylinux8
+alfresco-search-enterprise:
+  enabled: false
+elasticsearch:
+  enabled: false
+share:
+  image:
+    repository: alfresco/alfresco-share
+    tag: 23.2.1
+alfresco-search:
+  enabled: true
+  searchServicesImage:
+    repository: alfresco/alfresco-search-services
+    tag: 2.0.9.1
+# Disable Enterprise only features
+alfresco-transform-service:
+  enabled: true
+  transformrouter:
+    enabled: false
+  pdfrenderer:
+    replicaCount: 1
+  imagemagick:
+    replicaCount: 1
+  libreoffice:
+    replicaCount: 1
+  tika:
+    replicaCount: 1
+  transformmisc:
+    replicaCount: 1
+  filestore:
+    enabled: false
+alfresco-digital-workspace:
+  enabled: false
+alfresco-sync-service:
+  enabled: false
+alfresco-ai-transformer:
+  enabled: false
+alfresco-connector-ms365:
+  enabled: false
+alfresco-connector-msteams:
+  enabled: false
