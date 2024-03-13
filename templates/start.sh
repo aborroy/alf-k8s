@@ -7,11 +7,13 @@ set -o pipefail
 array=( "helm" "kubectl" {{ if eq .Kubernetes "kind" }}"kind" {{ end }})
 for i in "${array[@]}"
 do
-    command -v $i >/dev/null 2>&1 || { 
-        echo >&2 "$i is required"; 
-        exit 1; 
+    command -v $i >/dev/null 2>&1 || {
+        echo >&2 "$i is required";
+        exit 1;
     }
 done
+
+. common.sh
 
 {{- if eq .Kubernetes "kind" }}
 
@@ -38,6 +40,8 @@ nodes:
 EOF
 
 {{- end }}
+
+checkKontext "You're about to install Alfresco"
 
 {{- if eq .Kubernetes "docker-desktop" }}
 helm upgrade --install ingress-nginx ingress-nginx \

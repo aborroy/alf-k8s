@@ -7,11 +7,15 @@ set -o pipefail
 array=( "helm" "kubectl" )
 for i in "${array[@]}"
 do
-    command -v $i >/dev/null 2>&1 || { 
-        echo >&2 "$i is required"; 
-        exit 1; 
+    command -v $i >/dev/null 2>&1 || {
+        echo >&2 "$i is required";
+        exit 1;
     }
 done
+
+. common.sh
+
+checkKontext "You're about to uninstall Alfresco"
 
 helm uninstall -n alfresco acs
 
