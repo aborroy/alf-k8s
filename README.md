@@ -1,6 +1,8 @@
 # alf-k8s
 
-Alfresco Community Kubernetes Deployment CLI using [Helm](https://helm.sh) and [Docker Desktop](https://docs.docker.com/desktop/). Additional details are available in [ACS Deployment](https://github.com/Alfresco/acs-deployment/blob/master/docs/helm/desktop-deployment.md).
+Alfresco Community Kubernetes Deployment CLI using [Helm](https://helm.sh) and [Docker Desktop](https://docs.docker.com/desktop/) or [Kubernetes In Docker](https://kind.sigs.k8s.io/) (KinD) cluster.
+
+Additional details are available in [ACS Deployment](https://github.com/Alfresco/acs-deployment/blob/master/docs/helm/desktop-deployment.md).
 
 Requires separate install of [kubectl](https://kubernetes.io/docs/reference/kubectl/) and [Helm](https://helm.sh).
 
@@ -8,8 +10,19 @@ Requires separate install of [kubectl](https://kubernetes.io/docs/reference/kube
 
 Apply following configurations to Docker Desktop settings:
 
-- `Settings > Resources > Advanced > Memory: 16GB`
-- `Settings > Kubernetes > Enable Kubernetes`
+- `Settings > Resources > Advanced > Memory: 16 GB`
+- `Settings > Kubernetes > Enable Kubernetes: ON`
+
+After changing the necessary settings `Apply and restart` the docker desktop.
+
+## Setting up kind
+
+Take a look to the [KinD quickstart](https://kind.sigs.k8s.io/docs/user/quick-start/) to learn how to install the binary cli on your machine and to learn briefly the main commands that you can run.
+
+Apply following configurations to Docker Desktop settings:
+
+- `Settings > Resources > Advanced > Memory: 16 GB`
+- `Settings > Kubernetes > Enable Kubernetes: OFF`
 
 After changing the necessary settings `Apply and restart` the docker desktop.
 
@@ -33,20 +46,23 @@ Usage:
   alf-k8s create [flags]
 
 Flags:
-  -h, --help             help for create
-  -o, --output string    Local Directory to write produced assets
-  -v, --version string   Version of ACS to be deployed (23.1 or 23.2)
+  -h, --help                help for create
+  -k, --kubernetes string   Kubernetes cluster: docker-desktop (default) or kind
+  -o, --output string       Local Directory to write produced assets, 'output' by default
+  -v, --version string      Version of ACS to be deployed (23.1 or 23.2)
 ```
 
 ### Creating a sample deployment
 
-Run the command selecting the Alfresco Community version to be deployed
+Run the command selecting the Alfresco Community version to be deployed. 
 
 ```bash
 $ ./alf-k8s create -v 23.2
 ```
 
-Docker assets will be produced by default in `output` folder:
+>> The previous command uses Docker Desktop as Kubernetes cluster, add `-k kind` to use [kind](https://kind.sigs.k8s.io) instead.
+
+Kubernetes assets will be produced by default in `output` folder:
 
 ```bash
 $ tree output

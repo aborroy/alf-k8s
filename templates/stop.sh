@@ -17,6 +17,8 @@ helm uninstall -n alfresco acs
 
 kubectl delete namespace alfresco
 
+{{- if eq .Kubernetes "docker-desktop" }}
 helm uninstall -n ingress-nginx ingress-nginx
+{{- end}}
 
 kubectl delete namespace ingress-nginx

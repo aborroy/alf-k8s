@@ -14,15 +14,18 @@ import (
 // Default values
 const OutputRootPath string = "output"
 const TemplateRootPath string = "templates"
+const KubernetesEngine string = "docker-desktop"
 
 // Parameters mapping
 var version string
 var outputDirectory string
+var kubernetes string
 
 // Template Variables
 type Values struct {
 	Version string
 	Secret  string
+	Kubernetes string
 }
 
 var createCmd = &cobra.Command{
@@ -35,7 +38,12 @@ var createCmd = &cobra.Command{
 			outputRoot = outputDirectory
 		}
 
-		values := Values{version, pkg.GenerateRandomString(24)}
+		var kubernetesEngine = KubernetesEngine
+		if kubernetes != "" {
+			kubernetesEngine = kubernetes
+		}
+
+		values := Values{version, pkg.GenerateRandomString(24), kubernetesEngine}
 
 		templateList, err := pkg.EmbedWalk("templates")
 		if err != nil {
@@ -67,6 +75,7 @@ var createCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(createCmd)
 	createCmd.Flags().StringVarP(&version, "version", "v", "", "Version of ACS to be deployed (23.1 or 23.2)")
-	createCmd.Flags().StringVarP(&outputDirectory, "output", "o", "", "Local Directory to write produced assets")
+	createCmd.Flags().StringVarP(&outputDirectory, "output", "o", "", "Local Directory to write produced assets, 'output' by default")
+	createCmd.Flags().StringVarP(&kubernetes, "kubernetes", "k", "", "Kubernetes cluster: docker-desktop (default) or kind")
 	createCmd.MarkFlagRequired("version")
 }
