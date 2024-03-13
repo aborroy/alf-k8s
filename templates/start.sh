@@ -57,8 +57,12 @@ kubectl create namespace alfresco
 helm repo add alfresco https://kubernetes-charts.alfresco.com/stable
 helm repo update
 
+{{ if eq .TLS true }}
+GLOBAL_KNOWN_URLS=https://localhost
+{{- else }}
 GLOBAL_KNOWN_URLS=http://localhost
-VALUES="values/version_values.yaml,values/resources_values.yaml,values/community_values.yaml"
+{{- end}}
+VALUES="values/version_values.yaml,values/resources_values.yaml,values/community_values.yaml{{ if eq .TLS true }},values/tls.yaml{{ end }}"
 helm install acs alfresco/alfresco-content-services \
    --values=${VALUES} \
    --set global.search.sharedSecret={{.Secret}} \

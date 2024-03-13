@@ -49,12 +49,13 @@ Flags:
   -h, --help                help for create
   -k, --kubernetes string   Kubernetes cluster: docker-desktop (default) or kind
   -o, --output string       Local Directory to write produced assets, 'output' by default
+  -t, --tls string          Enable TLS protocol for ingress
   -v, --version string      Version of ACS to be deployed (23.1 or 23.2)
 ```
 
 ### Creating a sample deployment
 
-Run the command selecting the Alfresco Community version to be deployed. 
+Run the command selecting the Alfresco Community version to be deployed.
 
 ```bash
 $ ./alf-k8s create -v 23.2

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"path/filepath"
 	"math/rand"
-	"net/http"
 	"os"
 	"time"
 )
@@ -57,25 +57,6 @@ func CopyFile(src, dst string) error {
 	return err
 }
 
-func DownloadFile(filepath string, url string) error {
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	out, err := os.Create(filepath)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, resp.Body)
-	return err
-
-}
-
 var TemplateFs embed.FS
 
 func EmbedWalk(root string) ([]string, error) {
@@ -91,6 +72,46 @@ func EmbedWalk(root string) ([]string, error) {
 		return nil
 	})
 	return paths, nil
+}
+
+func VerifyOutputFile(filePath string) error {
+	folder := filepath.Dir(filePath)
+	file, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	stat, err := file.Stat()
+	if err != nil {
+		return err
+	}
+	if stat.Size() == 0 {
+		err := os.Remove(filePath)
+		if err != nil {
+			return err
+		}
+		empty, err := IsEmpty(folder)
+		if err != nil {
+			return err
+		}
+		if empty {
+			os.Remove(folder)
+		}
+	}
+	return nil
+}
+
+func IsEmpty(name string) (bool, error) {
+	f, err := os.Open(name)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+
+	_, err = f.Readdirnames(1)
+	if err == io.EOF {
+		return true, nil
+	}
+	return false, err
 }
 
 const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

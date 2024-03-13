@@ -5,6 +5,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"strconv"
 	"text/template"
 
 	"github.com/aborroy/alf-k8s/pkg"
@@ -20,12 +21,14 @@ const KubernetesEngine string = "docker-desktop"
 var version string
 var outputDirectory string
 var kubernetes string
+var tls string
 
 // Template Variables
 type Values struct {
 	Version string
 	Secret  string
 	Kubernetes string
+	TLS bool
 }
 
 var createCmd = &cobra.Command{
@@ -42,8 +45,16 @@ var createCmd = &cobra.Command{
 		if kubernetes != "" {
 			kubernetesEngine = kubernetes
 		}
+		var tlsEnabled = false
+		if tls != "" {
+			tlsEnabled, _ = strconv.ParseBool(tls)
+		}
 
-		values := Values{version, pkg.GenerateRandomString(24), kubernetesEngine}
+		values := Values{
+			version, 
+			pkg.GenerateRandomString(24), 
+			kubernetesEngine, 
+			tlsEnabled}
 
 		templateList, err := pkg.EmbedWalk("templates")
 		if err != nil {
@@ -67,6 +78,10 @@ var createCmd = &cobra.Command{
 			if path.Ext(f.Name()) == ".sh" {
 				f.Chmod(0755)
 			}
+			err = pkg.VerifyOutputFile(f.Name())
+			if err != nil {
+				panic(err)
+			}			
 		}
 
 	},
@@ -77,5 +92,6 @@ func init() {
 	createCmd.Flags().StringVarP(&version, "version", "v", "", "Version of ACS to be deployed (23.1 or 23.2)")
 	createCmd.Flags().StringVarP(&outputDirectory, "output", "o", "", "Local Directory to write produced assets, 'output' by default")
 	createCmd.Flags().StringVarP(&kubernetes, "kubernetes", "k", "", "Kubernetes cluster: docker-desktop (default) or kind")
+	createCmd.Flags().StringVarP(&tls, "tls", "t", "", "Enable TLS protocol for ingress")
 	createCmd.MarkFlagRequired("version")
 }
