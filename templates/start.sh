@@ -64,5 +64,5 @@ helm install acs alfresco/alfresco-content-services \
    --set global.search.sharedSecret={{.Secret}} \
    --set global.known_urls=${GLOBAL_KNOWN_URLS} \
    --atomic \
-   --timeout 5m0s \
+   --timeout 10m0s \
    --namespace=alfresco
