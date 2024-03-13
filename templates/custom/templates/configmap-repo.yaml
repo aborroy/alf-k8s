@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: custom-repository-properties
+data:
+  alfresco-global.properties: |
+    alfresco_user_store.adminpassword={{ .AdminPassword }}
+    system.preferred.password.encoding=bcrypt10

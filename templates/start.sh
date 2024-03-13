@@ -57,6 +57,8 @@ kubectl create namespace alfresco
 helm repo add alfresco https://kubernetes-charts.alfresco.com/stable
 helm repo update
 
+helm install --namespace alfresco alfresco-config ./custom
+
 {{ if eq .TLS true }}
 GLOBAL_KNOWN_URLS=https://localhost
 {{- else }}

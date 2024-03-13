@@ -49,6 +49,7 @@ Flags:
   -h, --help                help for create
   -k, --kubernetes string   Kubernetes cluster: docker-desktop (default) or kind
   -o, --output string       Local Directory to write produced assets, 'output' by default
+  -p, --password string     Password for admin user
   -t, --tls string          Enable TLS protocol for ingress
   -v, --version string      Version of ACS to be deployed (23.1 or 23.2)
 ```
@@ -70,6 +71,10 @@ $ tree output
 output
 ├── start.sh
 ├── stop.sh
+├── custom
+│   ├── Chart.yaml
+│   └── templates
+│       └── configmap-repo.yaml
 └── values
     ├── community_values.yaml
     ├── resources_values.yaml

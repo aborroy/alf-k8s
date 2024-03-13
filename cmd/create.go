@@ -4,31 +4,36 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/aborroy/alf-k8s/pkg"
 	"github.com/spf13/cobra"
+
+	"eagain.net/go/ntlmv2hash"
 )
 
 // Default values
 const OutputRootPath string = "output"
 const TemplateRootPath string = "templates"
 const KubernetesEngine string = "docker-desktop"
+const DefaultAdminPassword string = "209c6174da490caeb422f3fa5a7ae634" // admin
 
 // Parameters mapping
 var version string
 var outputDirectory string
 var kubernetes string
 var tls string
+var adminPass string
 
 // Template Variables
 type Values struct {
-	Version string
-	Secret  string
-	Kubernetes string
-	TLS bool
+	Version       string // ACS Version (23.2, 23.1...)
+	Secret        string // Shared secret string for Repo and Solr communication
+	Kubernetes    string // Kubernetes cluster (Docker Desktop, KinD)
+	TLS           bool   // Enable TLS in ingress controller for https access
+	AdminPassword string // Password for admin user ('admin' is default password)
 }
 
 var createCmd = &cobra.Command{
@@ -40,7 +45,6 @@ var createCmd = &cobra.Command{
 		if outputDirectory != "" {
 			outputRoot = outputDirectory
 		}
-
 		var kubernetesEngine = KubernetesEngine
 		if kubernetes != "" {
 			kubernetesEngine = kubernetes
@@ -49,12 +53,18 @@ var createCmd = &cobra.Command{
 		if tls != "" {
 			tlsEnabled, _ = strconv.ParseBool(tls)
 		}
+		var adminPassword = DefaultAdminPassword
+		if adminPass != "" {
+			// Alfresco accepts only lower case NTLM passwords
+			adminPassword = strings.ToLower(ntlmv2hash.NTPasswordHash(adminPass))
+		}
 
 		values := Values{
-			version, 
-			pkg.GenerateRandomString(24), 
-			kubernetesEngine, 
-			tlsEnabled}
+			version,
+			pkg.GenerateRandomString(24),
+			kubernetesEngine,
+			tlsEnabled,
+			adminPassword}
 
 		templateList, err := pkg.EmbedWalk("templates")
 		if err != nil {
@@ -81,7 +91,7 @@ var createCmd = &cobra.Command{
 			err = pkg.VerifyOutputFile(f.Name())
 			if err != nil {
 				panic(err)
-			}			
+			}
 		}
 
 	},
@@ -93,5 +103,6 @@ func init() {
 	createCmd.Flags().StringVarP(&outputDirectory, "output", "o", "", "Local Directory to write produced assets, 'output' by default")
 	createCmd.Flags().StringVarP(&kubernetes, "kubernetes", "k", "", "Kubernetes cluster: docker-desktop (default) or kind")
 	createCmd.Flags().StringVarP(&tls, "tls", "t", "", "Enable TLS protocol for ingress")
+	createCmd.Flags().StringVarP(&adminPass, "password", "p", "", "Password for admin user")
 	createCmd.MarkFlagRequired("version")
 }

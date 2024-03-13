@@ -2,6 +2,9 @@
 alfresco-repository:
   image:
     tag: 23.2.1
+  configuration:
+    repository:
+      existingConfigMap: custom-repository-properties    
 alfresco-transform-service:
   pdfrenderer:
     image:
