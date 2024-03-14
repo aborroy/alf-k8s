@@ -78,7 +78,7 @@ Run the command using interactive mode.
 ```bash
 $ ./alf-k8s create -i
 ? Which ACS version do you want to use? 23.2
-? What Kubernetes cluster do you want to use? kind
+? What Kubernetes cluster do you want to use? docker-desktop
 ? Do you want to use HTTPs for Ingress? No
 ? Choose the password for your admin user admin
 ```
