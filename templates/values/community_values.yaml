@@ -46,7 +46,8 @@ alfresco-transform-service:
   filestore:
     enabled: false
 alfresco-digital-workspace:
-  enabled: false
+  image:
+    repository: alfresco/alfresco-content-app
 alfresco-sync-service:
   enabled: false
 alfresco-ai-transformer:
