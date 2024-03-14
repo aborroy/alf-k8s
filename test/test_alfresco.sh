@@ -12,7 +12,6 @@ function cleanup {
   rm -rf output
   set -e
 }
-trap cleanup EXIT
 
 function waitAlfrescoReady {
   echo "Starting Alfresco ..."
@@ -23,7 +22,7 @@ function waitAlfrescoReady {
 cd ..
 
 # Alfresco Community
-go run main.go create -v 23.2 -k kind
+go run main.go create -v 23.2 -k kind -p admin
 
 cd output
 

@@ -4,7 +4,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"text/template"
 
@@ -21,20 +20,12 @@ const KubernetesEngine string = "docker-desktop"
 const DefaultAdminPassword string = "209c6174da490caeb422f3fa5a7ae634" // admin
 
 // Parameters mapping
+var interactive bool
 var version string
 var outputDirectory string
 var kubernetes string
-var tls string
+var tls bool
 var adminPass string
-
-// Template Variables
-type Values struct {
-	Version       string // ACS Version (23.2, 23.1...)
-	Secret        string // Shared secret string for Repo and Solr communication
-	Kubernetes    string // Kubernetes cluster (Docker Desktop, KinD)
-	TLS           bool   // Enable TLS in ingress controller for https access
-	AdminPassword string // Password for admin user ('admin' is default password)
-}
 
 var createCmd = &cobra.Command{
 	Use:   "create",
@@ -45,26 +36,33 @@ var createCmd = &cobra.Command{
 		if outputDirectory != "" {
 			outputRoot = outputDirectory
 		}
-		var kubernetesEngine = KubernetesEngine
-		if kubernetes != "" {
-			kubernetesEngine = kubernetes
-		}
-		var tlsEnabled = false
-		if tls != "" {
-			tlsEnabled, _ = strconv.ParseBool(tls)
-		}
-		var adminPassword = DefaultAdminPassword
-		if adminPass != "" {
-			// Alfresco accepts only lower case NTLM passwords
-			adminPassword = strings.ToLower(ntlmv2hash.NTPasswordHash(adminPass))
-		}
 
-		values := Values{
-			version,
-			pkg.GenerateRandomString(24),
-			kubernetesEngine,
-			tlsEnabled,
-			adminPassword}
+		values := pkg.Parameters{}
+		if interactive {
+			values = pkg.GetPromptValues()
+			values.Secret = pkg.GenerateRandomString(24)
+			values.AdminPassword = strings.ToLower(ntlmv2hash.NTPasswordHash(values.AdminPassword))
+		} else {
+			var kubernetesEngine = KubernetesEngine
+			if kubernetes != "" {
+				kubernetesEngine = kubernetes
+			}
+			var tlsEnabled = false
+			if tls {
+				tlsEnabled = true
+			}
+			var adminPassword = DefaultAdminPassword
+			if adminPass != "" {
+				adminPassword = strings.ToLower(ntlmv2hash.NTPasswordHash(adminPass))
+			}
+			values = pkg.Parameters{
+				Version:       version,
+				Secret:        pkg.GenerateRandomString(24),
+				Kubernetes:    kubernetesEngine,
+				TLS:           tlsEnabled,
+				AdminPassword: adminPassword,
+			}
+		}
 
 		templateList, err := pkg.EmbedWalk("templates")
 		if err != nil {
@@ -99,10 +97,14 @@ var createCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(createCmd)
+	createCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "Input values replying to command line prompts instead of using command line parameters")
 	createCmd.Flags().StringVarP(&version, "version", "v", "", "Version of ACS to be deployed (23.1 or 23.2)")
 	createCmd.Flags().StringVarP(&outputDirectory, "output", "o", "", "Local Directory to write produced assets, 'output' by default")
 	createCmd.Flags().StringVarP(&kubernetes, "kubernetes", "k", "", "Kubernetes cluster: docker-desktop (default) or kind")
-	createCmd.Flags().StringVarP(&tls, "tls", "t", "", "Enable TLS protocol for ingress")
+	createCmd.Flags().BoolVarP(&tls, "tls", "t", false, "Enable TLS protocol for ingress")
 	createCmd.Flags().StringVarP(&adminPass, "password", "p", "", "Password for admin user")
-	createCmd.MarkFlagRequired("version")
+	createCmd.MarkFlagsMutuallyExclusive("interactive", "version")
+	createCmd.MarkFlagsMutuallyExclusive("interactive", "kubernetes")
+	createCmd.MarkFlagsMutuallyExclusive("interactive", "tls")
+	createCmd.MarkFlagsMutuallyExclusive("interactive", "password")
 }

@@ -47,16 +47,19 @@ Usage:
 
 Flags:
   -h, --help                help for create
+  -i, --interactive         Input values replying to command line prompts instead of using command line parameters
   -k, --kubernetes string   Kubernetes cluster: docker-desktop (default) or kind
   -o, --output string       Local Directory to write produced assets, 'output' by default
   -p, --password string     Password for admin user
-  -t, --tls string          Enable TLS protocol for ingress
+  -t, --tls                 Enable TLS protocol for ingress
   -v, --version string      Version of ACS to be deployed (23.1 or 23.2)
 ```
 
 ### Creating a sample deployment
 
-Run the command selecting the Alfresco Community version to be deployed.
+**Using command line parameters**
+
+Run the command selecting the Alfresco Community version to be deployed . Additional options can be set using any parameter value from *flags* list.
 
 ```bash
 $ ./alf-k8s create -v 23.2
@@ -64,17 +67,34 @@ $ ./alf-k8s create -v 23.2
 
 >> The previous command uses Docker Desktop as Kubernetes cluster, add `-k kind` to use [kind](https://kind.sigs.k8s.io) instead.
 
+**Replying to prompts**
+
+Run the command using interactive mode.
+
+```bash
+$ ./alf-k8s create -i
+? Which ACS version do you want to use? 23.2
+? What Kubernetes cluster do you want to use? kind
+? Do you want to use HTTPs for Ingress? No
+? Choose the password for your admin user admin
+```
+
+>> Even when using interactive mode, output directory can be specified using the `-o` flag.
+
+**Output folder**
+
 Kubernetes assets will be produced by default in `output` folder:
 
 ```bash
 $ tree output
 output
-├── start.sh
-├── stop.sh
+├── common.sh
 ├── custom
 │   ├── Chart.yaml
 │   └── templates
 │       └── configmap-repo.yaml
+├── start.sh
+├── stop.sh
 └── values
     ├── community_values.yaml
     ├── resources_values.yaml
@@ -92,6 +112,7 @@ You can access all components of Alfresco Content Services using the same root a
   Content: http://localhost/alfresco
   Share: http://localhost/share
   API-Explorer: http://localhost/api-explorer
+  Alfresco Digital Workspace: http://localhost/workspace/
 ```
 
 Once the deployment has been tested, resources can be released using the following shell script:
