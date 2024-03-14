@@ -46,14 +46,18 @@ Usage:
   alf-k8s create [flags]
 
 Flags:
-  -h, --help                help for create
-  -i, --interactive         Input values replying to command line prompts instead of using command line parameters
-  -k, --kubernetes string   Kubernetes cluster: docker-desktop (default) or kind
-  -o, --output string       Local Directory to write produced assets, 'output' by default
-  -p, --password string     Password for admin user
-  -t, --tls                 Enable TLS protocol for ingress
-  -v, --version string      Version of ACS to be deployed (23.1 or 23.2)
+      --docker-user string       Username for Docker Hub
+      --docker-password string   Password for username in Docker Hub
+  -h, --help                     help for create
+  -i, --interactive              Input values replying to command line prompts instead of using command line parameters
+  -k, --kubernetes string        Kubernetes cluster: docker-desktop (default) or kind
+  -o, --output string            Local Directory to write produced assets, 'output' by default
+  -p, --password string          Password for Alfresco admin user
+  -t, --tls                      Enable TLS protocol for ingress
+  -v, --version string           Version of ACS to be deployed (23.1 or 23.2)
 ```
+
+>> Using `docker-user` and `docker-password` is recommended to avoid quota restrictions from Docker Hub when using `kind` as Kubernetes cluster
 
 ### Creating a sample deployment
 

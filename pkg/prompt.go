@@ -10,6 +10,7 @@ type Parameters struct {
 	Kubernetes    string // Kubernetes cluster (Docker Desktop, KinD)
 	TLS           bool   // Enable TLS in ingress controller for https access
 	AdminPassword string // Password for admin user ('admin' is default password)
+	DockerAuth    string // Base64 encode for Docker Hub credentials
 }
 
 var qs = []*survey.Question{

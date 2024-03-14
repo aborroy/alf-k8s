@@ -1,0 +1,9 @@
+{{- if ne .DockerAuth "none" }}
+{
+	"auths": {
+		"https://index.docker.io/v1/": {
+			"auth": "{{ .DockerAuth }}"
+		}
+	}
+}
+{{- end}}

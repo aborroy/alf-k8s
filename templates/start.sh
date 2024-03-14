@@ -37,6 +37,11 @@ nodes:
   - containerPort: 443
     hostPort: 443
     protocol: TCP
+{{- if ne .DockerAuth "none" }}
+  extraMounts:
+  - containerPath: /var/lib/kubelet/config.json
+    hostPath: ./config.json
+{{- end }}    
 EOF
 
 {{- end }}

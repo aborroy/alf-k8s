@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/base64"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,6 +27,8 @@ var outputDirectory string
 var kubernetes string
 var tls bool
 var adminPass string
+var dockerUser string
+var dockerPass string
 
 var createCmd = &cobra.Command{
 	Use:   "create",
@@ -63,6 +66,12 @@ var createCmd = &cobra.Command{
 				AdminPassword: adminPassword,
 			}
 		}
+
+		var dockerB64Auth = "none"
+		if dockerUser != "" {
+			dockerB64Auth = base64.StdEncoding.EncodeToString([]byte(dockerUser + ":" + dockerPass))
+		}
+		values.DockerAuth = dockerB64Auth
 
 		templateList, err := pkg.EmbedWalk("templates")
 		if err != nil {
@@ -102,7 +111,9 @@ func init() {
 	createCmd.Flags().StringVarP(&outputDirectory, "output", "o", "", "Local Directory to write produced assets, 'output' by default")
 	createCmd.Flags().StringVarP(&kubernetes, "kubernetes", "k", "", "Kubernetes cluster: docker-desktop (default) or kind")
 	createCmd.Flags().BoolVarP(&tls, "tls", "t", false, "Enable TLS protocol for ingress")
-	createCmd.Flags().StringVarP(&adminPass, "password", "p", "", "Password for admin user")
+	createCmd.Flags().StringVarP(&adminPass, "password", "p", "", "Password for Alfresco admin user")
+	createCmd.Flags().StringVar(&dockerUser, "docker-user", "", "Username for Docker Hub")
+	createCmd.Flags().StringVar(&dockerPass, "docker-password", "", "Password for username in Docker Hub")
 	createCmd.MarkFlagsMutuallyExclusive("interactive", "version")
 	createCmd.MarkFlagsMutuallyExclusive("interactive", "kubernetes")
 	createCmd.MarkFlagsMutuallyExclusive("interactive", "tls")
