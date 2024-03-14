@@ -41,10 +41,20 @@ var createCmd = &cobra.Command{
 		}
 
 		values := pkg.Parameters{}
+
+		var dockerB64Auth = "none"
+		if dockerUser != "" {
+			dockerB64Auth = base64.StdEncoding.EncodeToString([]byte(dockerUser + ":" + dockerPass))
+		}
+
 		if interactive {
 			values = pkg.GetPromptValues()
 			values.Secret = pkg.GenerateRandomString(24)
 			values.AdminPassword = strings.ToLower(ntlmv2hash.NTPasswordHash(values.AdminPassword))
+			if values.DockerUser != "" {
+				dockerB64Auth =
+					base64.StdEncoding.EncodeToString([]byte(values.DockerUser + ":" + values.DockerPass))
+			}
 		} else {
 			var kubernetesEngine = KubernetesEngine
 			if kubernetes != "" {
@@ -67,10 +77,6 @@ var createCmd = &cobra.Command{
 			}
 		}
 
-		var dockerB64Auth = "none"
-		if dockerUser != "" {
-			dockerB64Auth = base64.StdEncoding.EncodeToString([]byte(dockerUser + ":" + dockerPass))
-		}
 		values.DockerAuth = dockerB64Auth
 
 		templateList, err := pkg.EmbedWalk("templates")

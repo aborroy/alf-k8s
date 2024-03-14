@@ -10,10 +10,12 @@ type Parameters struct {
 	Kubernetes    string // Kubernetes cluster (Docker Desktop, KinD)
 	TLS           bool   // Enable TLS in ingress controller for https access
 	AdminPassword string // Password for admin user ('admin' is default password)
+	DockerUser    string // Username for Docker Hub
+	DockerPass    string // Password of the username for Docker Hub
 	DockerAuth    string // Base64 encode for Docker Hub credentials
 }
 
-var qs = []*survey.Question{
+var basicQuestions = []*survey.Question{
 	{
 		Name: "version",
 		Prompt: &survey.Select{
@@ -39,17 +41,38 @@ var qs = []*survey.Question{
 	{
 		Name: "adminPassword",
 		Prompt: &survey.Input{
-			Message: "Choose the password for your admin user",
+			Message: "Choose the password for your ACS admin user",
 			Default: "admin",
+		},
+	},
+}
+
+var kindQuestions = []*survey.Question{
+	{
+		Name: "dockerUser",
+		Prompt: &survey.Input{
+			Message: "Provide an existing username in Docker Hub",
+		},
+	},
+	{
+		Name: "dockerPass",
+		Prompt: &survey.Input{
+			Message: "Provide a password for the username in Docker Hub",
 		},
 	},
 }
 
 func GetPromptValues() Parameters {
 	answers := Parameters{}
-	err := survey.Ask(qs, &answers)
+	err := survey.Ask(basicQuestions, &answers)
 	if err != nil {
 		panic(err)
+	}
+	if answers.Kubernetes == "kind" {
+		err := survey.Ask(kindQuestions, &answers)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return answers
 }
