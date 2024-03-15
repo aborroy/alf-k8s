@@ -6,3 +6,9 @@ data:
   alfresco-global.properties: |
     alfresco_user_store.adminpassword={{ .AdminPassword }}
     system.preferred.password.encoding=bcrypt10
+    localTransform.core-aio.url=
+    localTransform.pdfrenderer.url=http://acs-pdfrenderer:80
+    localTransform.imagemagick.url=http://acs-imagemagick:80
+    localTransform.libreoffice.url=http://acs-libreoffice:80
+    localTransform.tika.url=http://acs-tika:80
+    localTransform.misc.url=http://acs-transform-misc:80
