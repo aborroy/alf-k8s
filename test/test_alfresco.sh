@@ -22,7 +22,7 @@ function waitAlfrescoReady {
 cd ..
 
 # Alfresco Community
-go run main.go create -v 23.2 -k kind -p admin
+go run main.go create -v 23.4 -k kind -p admin
 
 cd output
 
