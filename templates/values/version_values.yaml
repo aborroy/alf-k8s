@@ -1,3 +1,39 @@
+{{- if eq .Version "25.1"}}
+alfresco-repository:
+  image:
+    tag: 25.1.0
+  configuration:
+    repository:
+      existingConfigMap: custom-repository-properties    
+alfresco-transform-service:
+  pdfrenderer:
+    image:
+      tag: 5.1.7
+  imagemagick:
+    image:
+      tag: 5.1.7
+  libreoffice:
+    image:
+      tag: 5.1.7
+  tika:
+    image:
+      tag: 5.1.7
+  transformmisc:
+    image:
+      tag: 5.1.7
+share:
+  image:
+    tag: 25.1.0
+alfresco-digital-workspace:
+  image:
+    tag: 6.0.0
+alfresco-search:
+  searchServicesImage:
+    tag: 2.0.15
+postgresql:
+  image:
+    tag: 15.6.0
+{{- end}}
 {{- if eq .Version "23.4"}}
 alfresco-repository:
   image:
