@@ -20,8 +20,8 @@ var basicQuestions = []*survey.Question{
 		Name: "version",
 		Prompt: &survey.Select{
 			Message: "Which ACS version do you want to use?",
-			Options: []string{"25.1", "23.4", "23.2", "23.1"},
-			Default: "25.1",
+			Options: []string{"25.2", "25.1", "23.4", "23.2", "23.1"},
+			Default: "25.2",
 		},
 	},
 	{
